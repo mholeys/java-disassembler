@@ -63,9 +63,9 @@ public class FileNavigationPane extends JDAWindow {
 
         FileNode curNode = treeRoot;
         @SuppressWarnings("unchecked")
-        Enumeration<FileNode> enums = curNode.depthFirstEnumeration();
+        Enumeration<TreeNode> enums = curNode.depthFirstEnumeration();
         while (enums != null && enums.hasMoreElements()) {
-            FileNode node = enums.nextElement();
+            FileNode node = (FileNode) enums.nextElement();
             if (!node.isLeaf()) {
                 continue;
             }
@@ -244,7 +244,7 @@ public class FileNavigationPane extends JDAWindow {
             }
         }
 
-        parent.sort();
+//        parent.sort();
         tree.expandPath(new TreePath(tree.getModel().getRoot()));
         tree.updateUI();
 
@@ -324,19 +324,19 @@ public class FileNavigationPane extends JDAWindow {
             super.insert(newChild, childIndex);
         }
 
-        public void sort() {
-            recursiveSort(this);
-        }
-
-        @SuppressWarnings("unchecked")
-        private void recursiveSort(final FileNode node) {
-            Collections.sort(node.children, nodeComparator);
-            for (FileNode nextNode : (Iterable<FileNode>) node.children) {
-                if (nextNode.getChildCount() > 0) {
-                    recursiveSort(nextNode);
-                }
-            }
-        }
+//        public void sort() {
+//            recursiveSort(this);
+//        }
+//
+//        @SuppressWarnings("unchecked")
+//        private void recursiveSort(final FileNode node) {
+//            Collections.sort(node.children, nodeComparator);
+//            for (FileNode nextNode : (Iterable<FileNode>) node.children) {
+//                if (nextNode.getChildCount() > 0) {
+//                    recursiveSort(nextNode);
+//                }
+//            }
+//        }
 
         protected Comparator<FileNode> nodeComparator = (a, b) ->
         {

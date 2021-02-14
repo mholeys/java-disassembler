@@ -76,7 +76,7 @@ public class DecompileThread extends Thread {
         }
     }
 
-    private String stripUndisplayableChars(String s) {
+    public static String stripUndisplayableChars(String s) {
         StringBuilder result = new StringBuilder();
         int startIdx = 0, idx = 0;
         while (idx < s.length()) {
@@ -93,7 +93,7 @@ public class DecompileThread extends Thread {
         return result.toString();
     }
 
-    private boolean isUndisplayable(char c) {
+    private static boolean isUndisplayable(char c) {
         return c >= 255 || c == 127;
     }
 }

@@ -6,10 +6,12 @@ import club.bytecode.the.jda.Resources;
 import club.bytecode.the.jda.api.JDAPlugin;
 import club.bytecode.the.jda.decompilers.Decompilers;
 import club.bytecode.the.jda.decompilers.JDADecompiler;
+import club.bytecode.the.jda.decompilers.bytecode.BytecodeDecompiler;
 import club.bytecode.the.jda.gui.components.TabbedPane;
 import club.bytecode.the.jda.gui.dialogs.AboutWindow;
 import club.bytecode.the.jda.gui.dialogs.FontOptionsDialog;
 import club.bytecode.the.jda.gui.dialogs.IntroWindow;
+import club.bytecode.the.jda.gui.fileviewer.DecompileThread;
 import club.bytecode.the.jda.gui.fileviewer.FileViewerPane;
 import club.bytecode.the.jda.gui.fileviewer.Viewer;
 import club.bytecode.the.jda.gui.fileviewer.ViewerFile;
@@ -17,12 +19,18 @@ import club.bytecode.the.jda.gui.navigation.FileNavigationPane;
 import club.bytecode.the.jda.gui.search.SearchDialog;
 import club.bytecode.the.jda.settings.IPersistentWindow;
 import club.bytecode.the.jda.settings.Settings;
+import com.strobel.decompiler.Decompiler;
+import org.objectweb.asm.tree.ClassNode;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyVetoException;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 
@@ -200,7 +208,6 @@ public class MainViewerGUI extends JFrame implements IPersistentWindow {
         fileMenu.add(mntmDecompileSaveOpenedClasses);
 
         mntmDecompileSaveAllClasses.addActionListener(arg0 -> decompileSaveAllClasses());
-        mntmDecompileSaveAllClasses.setEnabled(false);
         mntmDecompileSaveOpenedClasses.setEnabled(false);
         fileMenu.add(mntmDecompileSaveAllClasses);
 
@@ -527,7 +534,88 @@ public class MainViewerGUI extends JFrame implements IPersistentWindow {
             JDA.showMessage("First open a class, jar, or zip file.");
             return;
         }
-        JDA.showMessage("This feature hasn't been implemented yet. Please submit an issue if you are interested!");
+
+        ArrayList<JDADecompiler> decompilers = new ArrayList<>();
+        for (int i = 0; i < JDA.viewer.allPanes.size(); i++) {
+            ButtonGroup group = JDA.viewer.allPanes.get(i);
+            for (Map.Entry<JRadioButtonMenuItem, JDADecompiler> entry : JDA.viewer.allDecompilers.get(group).entrySet()) {
+                if (group.isSelected(entry.getKey().getModel())) {
+                    decompilers.add(entry.getValue());
+                }
+            }
+        }
+        String basePath = "extraction";
+        ArrayList<Thread> decompileThreads = new ArrayList<>();
+        for (JDADecompiler decompiler : decompilers) {
+            if (decompiler != null) {
+                System.out.println(decompiler.getName());
+            }
+        }
+//        if (basePath != null) return;
+        for (JDADecompiler decompiler : decompilers) {
+            if (decompiler == null) { continue; }
+            String folder = decompiler.getName();
+//            if (decompiler instanceof BytecodeDecompiler) {
+//                folder = "bytecode";
+//            }
+            String decompilerFolder = basePath + File.separator + folder + File.separator;
+
+            for (FileContainer container : JDA.getOpenFiles()) {
+                Map<String, byte[]> files = container.getFiles();
+                for (String name : files.keySet()) {
+//                    System.out.println(decompilerFolder + name);
+
+                        // TODO thread;
+                    Thread thread = new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                ClassNode cn = container.loadClassFile(name);
+                                String decompileResult = null;
+
+                                if (cn == null) {
+                                    decompileResult = "// The file was removed during the reload.";
+                                } else {
+                                    decompiler.applyFilters(cn);
+                                    try {
+                                        String db =
+//                                                "container name:" + container.name + "\n" +
+                                                "decompiler:" + decompiler.getName() + "\n" +
+                                                "class?:" + name + "\n" +
+                                                "out:" + decompilerFolder + "\n"
+                                                ;
+                                        System.out.println(db);
+                                        decompileResult = decompiler.decompileClassNode(container, cn);
+                                    } catch (Exception e) {
+//                                        throw e;
+                                    }
+                                }
+                                String text = DecompileThread.stripUndisplayableChars(decompileResult);
+
+                                File f = new File(decompilerFolder + name);
+                                Files.createDirectories(f.toPath());
+                                f.delete();
+                                FileWriter fw = new FileWriter(f);
+                                fw.write(text);
+                                fw.close();
+                            } catch (IOException e) {
+
+                            }
+                        }
+
+                    };
+                    decompileThreads.add(thread);
+                    thread.start();
+
+//                    container.findClassfile();
+//                    DecompileThread t = new DecompileThread(this, decompilers.get(i), i, panels.get(i), button);
+//                    decompileThreads.add(t);
+//                    t.start();
+                }
+            }
+        }
+        //JDA.showMessage("This feature hasn't been implemented yet. Please submit an issue if you are interested!");
+
     }
 
     private void exitPrompt() {

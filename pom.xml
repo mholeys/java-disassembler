@@ -10,6 +10,10 @@
 
     <repositories>
         <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
             <id>libs</id>
             <releases>
                 <enabled>true</enabled>
@@ -19,8 +23,8 @@
             </snapshots>
             <url>${project.baseUri}libs</url>
         </repository>
-    </repositories>
 
+    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -148,16 +152,16 @@
             <artifactId>procyon-compilertools</artifactId>
             <version>0.5.36</version>
         </dependency>
-        <dependency>
-            <groupId>org.mapleir</groupId>
-            <artifactId>modasm</artifactId>
-            <version>0.0.1-ALPHA</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mapleir</groupId>
-            <artifactId>stdlib</artifactId>
-            <version>0.0.1-ALPHA</version>
-       	</dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.mapleir</groupId>-->
+<!--            <artifactId>main</artifactId>-->
+<!--            <version>0.0.1-ALPHA</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.mapleir</groupId>-->
+<!--            <artifactId>stdlib</artifactId>-->
+<!--            <version>0.0.1-ALPHA</version>-->
+<!--       	</dependency>-->
          <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
@@ -178,5 +182,24 @@
             <artifactId>asm-commons</artifactId>
             <version>7.1</version>
          </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.fifesoft</groupId>-->
+<!--            <artifactId>rsyntaxtextarea</artifactId>-->
+<!--            <version>2.0.2</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.jboss.windup.decompiler.fernflower</groupId>-->
+<!--            <artifactId>windup-fernflower</artifactId>-->
+<!--            <version>1.0.0.20171018</version>-->
+<!--        </dependency>-->
+
+
+        <dependency>
+            <groupId>com.github.LLVM-but-worse.maple-ir</groupId>
+            <artifactId>app-services</artifactId>
+            <version>master</version>
+        </dependency>
+
+
     </dependencies>
 </project>

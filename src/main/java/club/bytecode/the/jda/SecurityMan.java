@@ -72,7 +72,6 @@ public class SecurityMan extends SecurityManager {
     public void checkAccess(ThreadGroup g) {
     }
 
-    @Override
     public void checkAwtEventQueueAccess() {
     }
 
@@ -100,7 +99,7 @@ public class SecurityMan extends SecurityManager {
     public void checkLink(String lib) {
     }
 
-    @Override
+//    @Override
     public void checkMemberAccess(Class<?> clazz, int which) {
     }
 
@@ -152,7 +151,7 @@ public class SecurityMan extends SecurityManager {
     public void checkSetFactory() {
     }
 
-    @Override
+//    @Override
     public void checkSystemClipboardAccess() {
     }
 
